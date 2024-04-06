@@ -10,7 +10,7 @@ class User:
     def __init__(self, user_id='0') -> None:
         self.user_id = user_id
 
-    def log_food(cur):
+    def log_food(self, cur):
         food = input("Food? ")
         date = input("Date? ")
         try:
@@ -20,14 +20,14 @@ class User:
         except Error as e:
             print(f"Error {e}")
 
-    def view_nutrients(cur):
-        user = input("User? ")
+    def view_nutrients(self, cur):
         date = input("Date? ")
         try:
-            cur.execute()
+            cur.execute("""
+                        SELECT """)
             rows = cur.fetchall()
             if rows:
-                print(f"Food Log ({user} on {date})")
+                print(f"Food Log ({self.user_id} on {date})")
                 print(rows)
                 for row in rows:
                     print(f"User: , FoodId: , Foods: , Nutrients: ")
