@@ -9,16 +9,31 @@ def menu():
 class User:
     def __init__(self, user_id='0') -> None:
         self.user_id = user_id
-        self.food = []
-        self.nutrients = {}
 
-    def log_food():
-        return
-
-    def view_nutrients():
+    def log_food(cur):
+        food = input("Food? ")
+        date = input("Date? ")
         try:
-            pass
+            cur.execute("""
+                        INSERT INTO """)
+            print(f"Logged ({food} on {date})")
         except Error as e:
+            print(f"Error {e}")
+
+    def view_nutrients(cur):
+        user = input("User? ")
+        date = input("Date? ")
+        try:
+            cur.execute()
+            rows = cur.fetchall()
+            if rows:
+                print(f"Food Log ({user} on {date})")
+                print(rows)
+                for row in rows:
+                    print(f"User: , FoodId: , Foods: , Nutrients: ")
+            else: print("No data found")
+        except Error as e:
+            print(f"Error {e}")
             
 
 def main():
@@ -38,8 +53,8 @@ def main():
                 menu()
                 choice = input("Select choice: ")
                 casing = {
-                    '1' : User(current_user).log_food(),
-                    '2' : User(current_user).view_nutrients(),
+                    '1' : User(current_user).log_food(cur),
+                    '2' : User(current_user).view_nutrients(cur),
                     '3' : get_user(),
                 }
                 if choice == '0': return
