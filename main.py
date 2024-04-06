@@ -21,10 +21,15 @@ class User:
             print(f"Error {e}")
 
     def view_nutrients(self, cur):
-        date = input("Date? ")
+        date = input("Date? (dd/mm/yy)")
         try:
-            cur.execute("""
-                        SELECT """)
+            cur.execute(f"""
+                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+                        FROM entry
+                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+                        WHERE entry.date = {date} AND entry.user_id = {self.user_id}""")
             rows = cur.fetchall()
             if rows:
                 print(f"Food Log ({self.user_id} on {date})")
