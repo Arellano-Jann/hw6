@@ -1,0 +1,626 @@
+2024-04-03 21:11:02.419 PDT [71271] LOG:  starting PostgreSQL 12.18 (Ubuntu 12.18-0ubuntu0.20.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0, 64-bit
+2024-04-03 21:11:02.419 PDT [71271] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2024-04-03 21:11:02.422 PDT [71271] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2024-04-03 21:11:02.440 PDT [71272] LOG:  database system was shut down at 2023-04-07 23:42:38 PDT
+2024-04-03 21:11:02.449 PDT [71271] LOG:  database system is ready to accept connections
+2024-04-03 21:14:51.065 PDT [74299] jannarellano@postgres FATAL:  role "jannarellano" does not exist
+2024-04-03 21:14:56.718 PDT [74425] jannarellano@jannarellano FATAL:  role "jannarellano" does not exist
+2024-04-03 22:38:07.608 PDT [14369] postgres@cs457 FATAL:  database "cs457" does not exist
+2024-04-03 22:40:15.975 PDT [16433] postgres@cs457 ERROR:  relation "food" does not exist
+2024-04-03 22:40:15.975 PDT [16433] postgres@cs457 STATEMENT:  CREATE TABLE food_portion (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    measure_unit_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    gram_weight FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food(fdc_id),
+	    FOREIGN KEY (measure_unit_id) REFERENCES measure_unit(measure_unit_id)
+	);
+2024-04-03 22:40:15.987 PDT [16433] postgres@cs457 ERROR:  relation "food_update_log_entry" does not exist
+2024-04-03 22:40:15.987 PDT [16433] postgres@cs457 STATEMENT:  CREATE TABLE food_nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    nutrient_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),
+	    FOREIGN KEY (nutrient_id) REFERENCES nutrient(nutrient_id)
+	);
+2024-04-03 22:40:16.004 PDT [16433] postgres@cs457 ERROR:  relation "food_update_log_entry" does not exist
+2024-04-03 22:40:16.004 PDT [16433] postgres@cs457 STATEMENT:  CREATE TABLE users (
+	    user_id INTEGER PRIMARY KEY,
+	    name CHAR(255),
+	    date DATE,
+	    fcd_id INTEGER NOT NULL,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id)
+	);
+2024-04-03 22:40:16.012 PDT [16433] postgres@cs457 ERROR:  could not open file "cs457_hw4/measure_unit.csv" for reading: No such file or directory
+2024-04-03 22:40:16.012 PDT [16433] postgres@cs457 HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:40:16.012 PDT [16433] postgres@cs457 STATEMENT:  COPY measure_unit(measure_unit_id, name)
+	FROM 'cs457_hw4/measure_unit.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:40:16.012 PDT [16433] postgres@cs457 ERROR:  relation "food_portion" does not exist
+2024-04-03 22:40:16.012 PDT [16433] postgres@cs457 STATEMENT:  COPY food_portion(id, fdc_id, measure_unit_id, amount, gram_weight)
+	FROM 'cs457_hw4/food_portion.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 ERROR:  could not open file "cs457_hw4/nutrient.csv" for reading: No such file or directory
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 STATEMENT:  COPY nutrient(id, name, nutrient_nbr)
+	FROM 'cs457_hw4/nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 ERROR:  relation "food_nutrient" does not exist
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 STATEMENT:  COPY food_nutrient(id, fdc_id, nutrient_id, amount)
+	FROM 'cs457_hw4/food_nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 ERROR:  could not open file "cs457_hw4/food_update_log_entry.csv" for reading: No such file or directory
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:40:16.013 PDT [16433] postgres@cs457 STATEMENT:  COPY food_update_log_entry(fdc_id, description)
+	FROM 'cs457_hw4/food_update_log_entry.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:40:16.014 PDT [16433] postgres@cs457 ERROR:  relation "users" does not exist at character 203
+2024-04-03 22:40:16.014 PDT [16433] postgres@cs457 STATEMENT:  SELECT 
+	    users.id AS user_id, 
+	    users.fdc_id AS log_id, 
+	    food_update_log_entry.description AS log_description, 
+	    nutrient.name AS nutrient,
+	    food_nutrient.amount AS nutrient_amount
+	FROM users 
+	INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id 
+	INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id
+	INNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 22:46:17.263 PDT [19740] postgres@postgres ERROR:  relation "measure_unit" does not exist
+2024-04-03 22:46:17.263 PDT [19740] postgres@postgres STATEMENT:  COPY  measure_unit ( measure_unit_id, name ) FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 22:46:54.522 PDT [19740] postgres@postgres ERROR:  syntax error at or near "cat" at character 1
+2024-04-03 22:46:54.522 PDT [19740] postgres@postgres STATEMENT:  cat cs457_hw4/nutrient.csv
+	ls
+	CREATE TABLE measure_unit (    measure_unit_id INTEGER NOT NULL PRIMARY KEY,    name CHAR(255));
+2024-04-03 22:51:17.012 PDT [24548] postgres@postgres ERROR:  relation "measure_unit" already exists
+2024-04-03 22:51:17.012 PDT [24548] postgres@postgres STATEMENT:  CREATE TABLE measure_unit (
+	    measure_unit_id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255)
+	);
+2024-04-03 22:51:17.018 PDT [24548] postgres@postgres ERROR:  relation "food" does not exist
+2024-04-03 22:51:17.018 PDT [24548] postgres@postgres STATEMENT:  CREATE TABLE food_portion (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    measure_unit_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    gram_weight FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food(fdc_id),
+	    FOREIGN KEY (measure_unit_id) REFERENCES measure_unit(measure_unit_id)
+	);
+2024-04-03 22:51:17.029 PDT [24548] postgres@postgres ERROR:  relation "food_update_log_entry" does not exist
+2024-04-03 22:51:17.029 PDT [24548] postgres@postgres STATEMENT:  CREATE TABLE food_nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    nutrient_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),
+	    FOREIGN KEY (nutrient_id) REFERENCES nutrient(nutrient_id)
+	);
+2024-04-03 22:51:17.034 PDT [24548] postgres@postgres ERROR:  relation "food_update_log_entry" does not exist
+2024-04-03 22:51:17.034 PDT [24548] postgres@postgres STATEMENT:  CREATE TABLE users (
+	    user_id INTEGER PRIMARY KEY,
+	    name CHAR(255),
+	    date DATE,
+	    fcd_id INTEGER NOT NULL,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id)
+	);
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres ERROR:  syntax error at or near "FROM" at character 1
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres STATEMENT:  FROM 'cs457_hw4/measure_unit.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres ERROR:  relation "food_portion" does not exist
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres STATEMENT:  COPY food_portion(id, fdc_id, measure_unit_id, amount, gram_weight)
+	FROM 'cs457_hw4/food_portion.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres ERROR:  could not open file "cs457_hw4/nutrient.csv" for reading: No such file or directory
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres STATEMENT:  COPY nutrient(id, name, nutrient_nbr)
+	FROM 'cs457_hw4/nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres ERROR:  relation "food_nutrient" does not exist
+2024-04-03 22:51:17.042 PDT [24548] postgres@postgres STATEMENT:  COPY food_nutrient(id, fdc_id, nutrient_id, amount)
+	FROM 'cs457_hw4/food_nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:51:17.043 PDT [24548] postgres@postgres ERROR:  could not open file "cs457_hw4/food_update_log_entry.csv" for reading: No such file or directory
+2024-04-03 22:51:17.043 PDT [24548] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:51:17.043 PDT [24548] postgres@postgres STATEMENT:  COPY food_update_log_entry(fdc_id, description)
+	FROM 'cs457_hw4/food_update_log_entry.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:51:17.043 PDT [24548] postgres@postgres ERROR:  relation "users" does not exist at character 203
+2024-04-03 22:51:17.043 PDT [24548] postgres@postgres STATEMENT:  SELECT 
+	    users.id AS user_id, 
+	    users.fdc_id AS log_id, 
+	    food_update_log_entry.description AS log_description, 
+	    nutrient.name AS nutrient,
+	    food_nutrient.amount AS nutrient_amount
+	FROM users 
+	INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id 
+	INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id
+	INNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 22:52:48.277 PDT [25638] postgres@postgres ERROR:  relation "measure_unit" already exists
+2024-04-03 22:52:48.277 PDT [25638] postgres@postgres STATEMENT:  CREATE TABLE measure_unit (
+	    measure_unit_id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255)
+	);
+2024-04-03 22:52:48.277 PDT [25638] postgres@postgres ERROR:  relation "food_update_log_entry" already exists
+2024-04-03 22:52:48.277 PDT [25638] postgres@postgres STATEMENT:  CREATE TABLE food_update_log_entry (
+	    fdc_id INTEGER PRIMARY KEY,
+	    description CHAR(255)
+	);
+2024-04-03 22:52:48.277 PDT [25638] postgres@postgres ERROR:  relation "nutrient" already exists
+2024-04-03 22:52:48.277 PDT [25638] postgres@postgres STATEMENT:  CREATE TABLE nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255),
+	    nutrient_nbr FLOAT
+	);
+2024-04-03 22:52:48.294 PDT [25638] postgres@postgres ERROR:  column "nutrient_id" referenced in foreign key constraint does not exist
+2024-04-03 22:52:48.294 PDT [25638] postgres@postgres STATEMENT:  CREATE TABLE food_nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    nutrient_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),
+	    FOREIGN KEY (nutrient_id) REFERENCES nutrient(nutrient_id)
+	);
+2024-04-03 22:52:48.300 PDT [25638] postgres@postgres ERROR:  column "fdc_id" referenced in foreign key constraint does not exist
+2024-04-03 22:52:48.300 PDT [25638] postgres@postgres STATEMENT:  CREATE TABLE users (
+	    user_id INTEGER PRIMARY KEY,
+	    name CHAR(255),
+	    date DATE,
+	    fcd_id INTEGER NOT NULL,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id)
+	);
+2024-04-03 22:52:48.300 PDT [25638] postgres@postgres ERROR:  syntax error at or near "FROM" at character 1
+2024-04-03 22:52:48.300 PDT [25638] postgres@postgres STATEMENT:  FROM 'cs457_hw4/measure_unit.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres ERROR:  could not open file "cs457_hw4/food_portion.csv" for reading: No such file or directory
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres STATEMENT:  COPY food_portion(id, fdc_id, measure_unit_id, amount, gram_weight)
+	FROM 'cs457_hw4/food_portion.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres ERROR:  could not open file "cs457_hw4/nutrient.csv" for reading: No such file or directory
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres STATEMENT:  COPY nutrient(id, name, nutrient_nbr)
+	FROM 'cs457_hw4/nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres ERROR:  relation "food_nutrient" does not exist
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres STATEMENT:  COPY food_nutrient(id, fdc_id, nutrient_id, amount)
+	FROM 'cs457_hw4/food_nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres ERROR:  could not open file "cs457_hw4/food_update_log_entry.csv" for reading: No such file or directory
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:52:48.301 PDT [25638] postgres@postgres STATEMENT:  COPY food_update_log_entry(fdc_id, description)
+	FROM 'cs457_hw4/food_update_log_entry.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:52:48.302 PDT [25638] postgres@postgres ERROR:  relation "users" does not exist at character 203
+2024-04-03 22:52:48.302 PDT [25638] postgres@postgres STATEMENT:  SELECT 
+	    users.id AS user_id, 
+	    users.fdc_id AS log_id, 
+	    food_update_log_entry.description AS log_description, 
+	    nutrient.name AS nutrient,
+	    food_nutrient.amount AS nutrient_amount
+	FROM users 
+	INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id 
+	INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id
+	INNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 22:53:23.668 PDT [25992] postgres@postgres ERROR:  relation "measure_unit" already exists
+2024-04-03 22:53:23.668 PDT [25992] postgres@postgres STATEMENT:  CREATE TABLE measure_unit (
+	    measure_unit_id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255)
+	);
+2024-04-03 22:53:23.669 PDT [25992] postgres@postgres ERROR:  relation "food_update_log_entry" already exists
+2024-04-03 22:53:23.669 PDT [25992] postgres@postgres STATEMENT:  CREATE TABLE food_update_log_entry (
+	    fdc_id INTEGER PRIMARY KEY,
+	    description CHAR(255)
+	);
+2024-04-03 22:53:23.669 PDT [25992] postgres@postgres ERROR:  relation "nutrient" already exists
+2024-04-03 22:53:23.669 PDT [25992] postgres@postgres STATEMENT:  CREATE TABLE nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255),
+	    nutrient_nbr FLOAT
+	);
+2024-04-03 22:53:23.669 PDT [25992] postgres@postgres ERROR:  relation "food_portion" already exists
+2024-04-03 22:53:23.669 PDT [25992] postgres@postgres STATEMENT:  CREATE TABLE food_portion (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    measure_unit_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    gram_weight FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),
+	    FOREIGN KEY (measure_unit_id) REFERENCES measure_unit(measure_unit_id)
+	);
+2024-04-03 22:53:23.684 PDT [25992] postgres@postgres ERROR:  column "fdc_id" referenced in foreign key constraint does not exist
+2024-04-03 22:53:23.684 PDT [25992] postgres@postgres STATEMENT:  CREATE TABLE users (
+	    user_id INTEGER PRIMARY KEY,
+	    name CHAR(255),
+	    date DATE,
+	    fcd_id INTEGER NOT NULL,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id)
+	);
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres ERROR:  syntax error at or near "FROM" at character 1
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres STATEMENT:  FROM 'cs457_hw4/measure_unit.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres ERROR:  could not open file "cs457_hw4/food_portion.csv" for reading: No such file or directory
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres STATEMENT:  COPY food_portion(id, fdc_id, measure_unit_id, amount, gram_weight)
+	FROM 'cs457_hw4/food_portion.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres ERROR:  could not open file "cs457_hw4/nutrient.csv" for reading: No such file or directory
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:23.685 PDT [25992] postgres@postgres STATEMENT:  COPY nutrient(id, name, nutrient_nbr)
+	FROM 'cs457_hw4/nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres ERROR:  could not open file "cs457_hw4/food_nutrient.csv" for reading: No such file or directory
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres STATEMENT:  COPY food_nutrient(id, fdc_id, nutrient_id, amount)
+	FROM 'cs457_hw4/food_nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres ERROR:  could not open file "cs457_hw4/food_update_log_entry.csv" for reading: No such file or directory
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres STATEMENT:  COPY food_update_log_entry(fdc_id, description)
+	FROM 'cs457_hw4/food_update_log_entry.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres ERROR:  relation "users" does not exist at character 203
+2024-04-03 22:53:23.686 PDT [25992] postgres@postgres STATEMENT:  SELECT 
+	    users.id AS user_id, 
+	    users.fdc_id AS log_id, 
+	    food_update_log_entry.description AS log_description, 
+	    nutrient.name AS nutrient,
+	    food_nutrient.amount AS nutrient_amount
+	FROM users 
+	INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id 
+	INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id
+	INNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 22:53:44.839 PDT [26253] postgres@postgres ERROR:  relation "measure_unit" already exists
+2024-04-03 22:53:44.839 PDT [26253] postgres@postgres STATEMENT:  CREATE TABLE measure_unit (
+	    measure_unit_id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255)
+	);
+2024-04-03 22:53:44.839 PDT [26253] postgres@postgres ERROR:  relation "food_update_log_entry" already exists
+2024-04-03 22:53:44.839 PDT [26253] postgres@postgres STATEMENT:  CREATE TABLE food_update_log_entry (
+	    fdc_id INTEGER PRIMARY KEY,
+	    description CHAR(255)
+	);
+2024-04-03 22:53:44.839 PDT [26253] postgres@postgres ERROR:  relation "nutrient" already exists
+2024-04-03 22:53:44.839 PDT [26253] postgres@postgres STATEMENT:  CREATE TABLE nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    name CHAR(255),
+	    nutrient_nbr FLOAT
+	);
+2024-04-03 22:53:44.840 PDT [26253] postgres@postgres ERROR:  relation "food_portion" already exists
+2024-04-03 22:53:44.840 PDT [26253] postgres@postgres STATEMENT:  CREATE TABLE food_portion (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    measure_unit_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    gram_weight FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),
+	    FOREIGN KEY (measure_unit_id) REFERENCES measure_unit(measure_unit_id)
+	);
+2024-04-03 22:53:44.840 PDT [26253] postgres@postgres ERROR:  relation "food_nutrient" already exists
+2024-04-03 22:53:44.840 PDT [26253] postgres@postgres STATEMENT:  CREATE TABLE food_nutrient (
+	    id INTEGER NOT NULL PRIMARY KEY,
+	    fdc_id INTEGER NOT NULL,
+	    nutrient_id INTEGER NOT NULL,
+	    amount FLOAT,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),
+	    FOREIGN KEY (nutrient_id) REFERENCES nutrient(id)
+	);
+2024-04-03 22:53:44.845 PDT [26253] postgres@postgres ERROR:  column "fdc_id" referenced in foreign key constraint does not exist
+2024-04-03 22:53:44.845 PDT [26253] postgres@postgres STATEMENT:  CREATE TABLE users (
+	    user_id INTEGER PRIMARY KEY,
+	    name CHAR(255),
+	    date DATE,
+	    fcd_id INTEGER NOT NULL,
+	    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id)
+	);
+2024-04-03 22:53:44.846 PDT [26253] postgres@postgres ERROR:  syntax error at or near "FROM" at character 1
+2024-04-03 22:53:44.846 PDT [26253] postgres@postgres STATEMENT:  FROM 'cs457_hw4/measure_unit.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:44.846 PDT [26253] postgres@postgres ERROR:  could not open file "cs457_hw4/food_portion.csv" for reading: No such file or directory
+2024-04-03 22:53:44.846 PDT [26253] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:44.846 PDT [26253] postgres@postgres STATEMENT:  COPY food_portion(id, fdc_id, measure_unit_id, amount, gram_weight)
+	FROM 'cs457_hw4/food_portion.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres ERROR:  could not open file "cs457_hw4/nutrient.csv" for reading: No such file or directory
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres STATEMENT:  COPY nutrient(id, name, nutrient_nbr)
+	FROM 'cs457_hw4/nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres ERROR:  could not open file "cs457_hw4/food_nutrient.csv" for reading: No such file or directory
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres STATEMENT:  COPY food_nutrient(id, fdc_id, nutrient_id, amount)
+	FROM 'cs457_hw4/food_nutrient.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres ERROR:  could not open file "cs457_hw4/food_update_log_entry.csv" for reading: No such file or directory
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres HINT:  COPY FROM instructs the PostgreSQL server process to read a file. You may want a client-side facility such as psql's \copy.
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres STATEMENT:  COPY food_update_log_entry(fdc_id, description)
+	FROM 'cs457_hw4/food_update_log_entry.csv'
+	DELIMITER ','
+	CSV HEADER;
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres ERROR:  relation "users" does not exist at character 203
+2024-04-03 22:53:44.847 PDT [26253] postgres@postgres STATEMENT:  SELECT 
+	    users.id AS user_id, 
+	    users.fdc_id AS log_id, 
+	    food_update_log_entry.description AS log_description, 
+	    nutrient.name AS nutrient,
+	    food_nutrient.amount AS nutrient_amount
+	FROM users 
+	INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id 
+	INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id
+	INNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 22:57:28.183 PDT [27901] postgres@postgres ERROR:  column "fdc_id" referenced in foreign key constraint does not exist
+2024-04-03 22:57:28.183 PDT [27901] postgres@postgres STATEMENT:  CREATE TABLE users (    user_id INTEGER PRIMARY KEY,    name CHAR(255),    date DATE,    fcd_id INTEGER NOT NULL,    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id));
+2024-04-03 22:58:00.321 PDT [27901] postgres@postgres ERROR:  column "fdc_id" referenced in foreign key constraint does not exist
+2024-04-03 22:58:00.321 PDT [27901] postgres@postgres STATEMENT:  CREATE TABLE users (    user_id INTEGER PRIMARY KEY,    name CHAR(255),    date DATE,    fcd_id INTEGER NOT NULL,    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id));
+2024-04-03 22:58:27.988 PDT [27901] postgres@postgres ERROR:  duplicate key value violates unique constraint "measure_unit_pkey"
+2024-04-03 22:58:27.988 PDT [27901] postgres@postgres DETAIL:  Key (measure_unit_id)=(1000) already exists.
+2024-04-03 22:58:27.988 PDT [27901] postgres@postgres CONTEXT:  COPY measure_unit, line 2
+2024-04-03 22:58:27.988 PDT [27901] postgres@postgres STATEMENT:  COPY  measure_unit ( measure_unit_id, name ) FROM STDIN DELIMITER ','CSV HEADER;
+2024-04-03 22:58:38.312 PDT [27901] postgres@postgres ERROR:  extra data after last expected column
+2024-04-03 22:58:38.312 PDT [27901] postgres@postgres CONTEXT:  COPY food_portion, line 2: ""118702","319875","","2.0","1001","","","35.8","1","","""
+2024-04-03 22:58:38.312 PDT [27901] postgres@postgres STATEMENT:  COPY  food_portion ( id, fdc_id, measure_unit_id, amount, gram_weight ) FROM STDIN DELIMITER ','CSV HEADER;
+2024-04-03 22:59:04.736 PDT [27901] postgres@postgres ERROR:  extra data after last expected column
+2024-04-03 22:59:04.736 PDT [27901] postgres@postgres CONTEXT:  COPY food_portion, line 2: ""118702","319875","","2.0","1001","","","35.8","1","","""
+2024-04-03 22:59:04.736 PDT [27901] postgres@postgres STATEMENT:  COPY  food_portion ( id, fdc_id, measure_unit_id, amount, gram_weight ) FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 22:59:52.208 PDT [27901] postgres@postgres ERROR:  extra data after last expected column
+2024-04-03 22:59:52.208 PDT [27901] postgres@postgres CONTEXT:  COPY food_portion, line 2: ""118702","319875","","2.0","1001","","","35.8","1","","""
+2024-04-03 22:59:52.208 PDT [27901] postgres@postgres STATEMENT:  COPY  food_portion ( id, fdc_id, measure_unit_id, amount, gram_weight ) FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:17:24.643 PDT [40432] postgres@testdb ERROR:  syntax error at or near "\" at character 56
+2024-04-03 23:17:24.643 PDT [40432] postgres@testdb STATEMENT:  COPY  measure_unit FROM STDIN DELIMITER ',' CSV HEADER;\COPY food_portion FROM 'cs457_hw4/food_portion.csv' DELIMITER ',' CSV HEADER;\COPY nutrient FROM 'cs457_hw4/nutrient.csv'DELIMITER ',' CSV HEADER;\COPY food_nutrient FROM 'cs457_hw4/food_nutrient.csv' DELIMITER ',' CSV HEADER;\COPY food_update_log_entry FROM 'cs457_hw4/food_update_log_entry.csv' DELIMITER ',' CSV HEADER;
+2024-04-03 23:18:11.901 PDT [40432] postgres@testdb ERROR:  syntax error at or near "\" at character 57
+2024-04-03 23:18:11.901 PDT [40432] postgres@testdb STATEMENT:  COPY  measure_unit FROM STDIN DELIMITER ',' CSV HEADER; \COPY food_portion FROM 'cs457_hw4/food_portion.csv' DELIMITER ',' CSV HEADER; \COPY nutrient FROM 'cs457_hw4/nutrient.csv' DELIMITER ',' CSV HEADER; \COPY food_nutrient FROM 'cs457_hw4/food_nutrient.csv' DELIMITER ',' CSV HEADER; \COPY food_update_log_entry FROM 'cs457_hw4/food_update_log_entry.csv' DELIMITER ',' CSV HEADER;
+2024-04-03 23:18:41.030 PDT [40432] postgres@testdb ERROR:  invalid input syntax for type integer: ""
+2024-04-03 23:18:41.030 PDT [40432] postgres@testdb CONTEXT:  COPY food_portion, line 2, column seq_num: ""
+2024-04-03 23:18:41.030 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:22:21.055 PDT [40432] postgres@testdb ERROR:  syntax error at or near ""NULL"" at character 36
+2024-04-03 23:22:21.055 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN null "NULL" DELIMITER ',' CSV HEADER;
+2024-04-03 23:22:34.058 PDT [40432] postgres@testdb ERROR:  syntax error at or near "DELIMITER" at character 36
+2024-04-03 23:22:34.058 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN null DELIMITER ',' CSV HEADER;
+2024-04-03 23:23:01.735 PDT [40432] postgres@testdb ERROR:  syntax error at or near "WITH" at character 56
+2024-04-03 23:23:01.735 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER WITH NULL as 'null';
+2024-04-03 23:23:16.261 PDT [40432] postgres@testdb ERROR:  syntax error at or near "WITH" at character 78
+2024-04-03 23:23:16.261 PDT [40432] postgres@testdb STATEMENT:  COPY food_portion FROM 'cs457_hw4/food_portion.csv' DELIMITER ',' CSV HEADER WITH NULL as 'null';
+2024-04-03 23:23:49.354 PDT [40432] postgres@testdb ERROR:  syntax error at or near "WITH" at character 56
+2024-04-03 23:23:49.354 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER WITH NULL as null;
+2024-04-03 23:23:53.460 PDT [40432] postgres@testdb ERROR:  syntax error at or near "null" at character 64
+2024-04-03 23:23:53.460 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER NULL as null;
+2024-04-03 23:25:14.816 PDT [40432] postgres@testdb ERROR:  syntax error at or near "CSV" at character 50
+2024-04-03 23:25:14.816 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' NULL CSV HEADER;
+2024-04-03 23:25:27.426 PDT [40432] postgres@testdb ERROR:  syntax error at or near "null" at character 50
+2024-04-03 23:25:27.426 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' NULL null CSV HEADER;
+2024-04-03 23:25:33.706 PDT [40432] postgres@testdb ERROR:  invalid input syntax for type integer: ""
+2024-04-03 23:25:33.706 PDT [40432] postgres@testdb CONTEXT:  COPY food_portion, line 2, column seq_num: ""
+2024-04-03 23:25:33.706 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' NULL 'null' CSV HEADER;
+2024-04-03 23:25:51.965 PDT [40432] postgres@testdb ERROR:  syntax error at or near "0" at character 50
+2024-04-03 23:25:51.965 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' NULL 0 CSV HEADER;
+2024-04-03 23:25:56.963 PDT [40432] postgres@testdb ERROR:  invalid input syntax for type integer: ""
+2024-04-03 23:25:56.963 PDT [40432] postgres@testdb CONTEXT:  COPY food_portion, line 2, column seq_num: ""
+2024-04-03 23:25:56.963 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' NULL '0' CSV HEADER;
+2024-04-03 23:26:11.574 PDT [40432] postgres@testdb ERROR:  invalid input syntax for type integer: ""
+2024-04-03 23:26:11.574 PDT [40432] postgres@testdb CONTEXT:  COPY food_portion, line 2, column seq_num: ""
+2024-04-03 23:26:11.574 PDT [40432] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' NULL 'null integer' CSV HEADER;
+2024-04-03 23:28:13.239 PDT [40432] postgres@testdb ERROR:  invalid input syntax for type double precision: ""
+2024-04-03 23:28:13.239 PDT [40432] postgres@testdb CONTEXT:  COPY nutrient, line 75, column rank: ""
+2024-04-03 23:28:13.239 PDT [40432] postgres@testdb STATEMENT:  COPY  nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:28:53.769 PDT [40432] postgres@testdb ERROR:  invalid input syntax for type double precision: ""
+2024-04-03 23:28:53.769 PDT [40432] postgres@testdb CONTEXT:  COPY food_nutrient, line 2, column min: ""
+2024-04-03 23:28:53.769 PDT [40432] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:31:02.700 PDT [40432] postgres@testdb ERROR:  syntax error at or near "(" at character 27
+2024-04-03 23:31:02.700 PDT [40432] postgres@testdb STATEMENT:  ALTER TABLE food_nutrient (    id INTEGER NOT NULL PRIMARY KEY,    fdc_id INTEGER NOT NULL,    nutrient_id INTEGER NOT NULL,    amount FLOAT,    data_points INTEGER,    derivation_id INTEGER,    min CHAR(255),    max CHAR(255),    median CHAR(255),    footnote CHAR(255),    min_year_acquired CHAR(255),    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),    FOREIGN KEY (nutrient_id) REFERENCES nutrient(id));
+2024-04-03 23:31:30.341 PDT [51254] postgres@cs457 ERROR:  relation "measure_unit" already exists
+2024-04-03 23:31:30.341 PDT [51254] postgres@cs457 STATEMENT:  CREATE TABLE measure_unit (    measure_unit_id INTEGER NOT NULL PRIMARY KEY,    name CHAR(255));
+2024-04-03 23:31:30.341 PDT [51254] postgres@cs457 ERROR:  relation "food_update_log_entry" already exists
+2024-04-03 23:31:30.341 PDT [51254] postgres@cs457 STATEMENT:  CREATE TABLE food_update_log_entry (    fdc_id INTEGER PRIMARY KEY,    description CHAR(255),    last_updated DATE);
+2024-04-03 23:31:30.341 PDT [51254] postgres@cs457 ERROR:  relation "nutrient" already exists
+2024-04-03 23:31:30.341 PDT [51254] postgres@cs457 STATEMENT:  CREATE TABLE nutrient (    id INTEGER NOT NULL PRIMARY KEY,    name CHAR(255),    unit_name CHAR(255),    nutrient_nbr INTEGER,    rank FLOAT);
+2024-04-03 23:32:50.905 PDT [52366] postgres@testdb ERROR:  invalid input syntax for type integer: ""
+2024-04-03 23:32:50.905 PDT [52366] postgres@testdb CONTEXT:  COPY food_portion, line 721, column data_points: ""
+2024-04-03 23:32:50.905 PDT [52366] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:33:04.715 PDT [52366] postgres@testdb ERROR:  invalid input syntax for type integer: "205.2"
+2024-04-03 23:33:04.715 PDT [52366] postgres@testdb CONTEXT:  COPY nutrient, line 53, column nutrient_nbr: "205.2"
+2024-04-03 23:33:04.715 PDT [52366] postgres@testdb STATEMENT:  COPY  nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:33:12.485 PDT [52366] postgres@testdb ERROR:  invalid input syntax for type integer: ""
+2024-04-03 23:33:12.485 PDT [52366] postgres@testdb CONTEXT:  COPY food_nutrient, line 2421, column data_points: ""
+2024-04-03 23:33:12.485 PDT [52366] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:38:56.537 PDT [56542] postgres@testdb ERROR:  insert or update on table "food_portion" violates foreign key constraint "food_portion_fdc_id_fkey"
+2024-04-03 23:38:56.537 PDT [56542] postgres@testdb DETAIL:  Key (fdc_id)=(319875) is not present in table "food_update_log_entry".
+2024-04-03 23:38:56.537 PDT [56542] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:39:17.911 PDT [56542] postgres@testdb ERROR:  invalid input syntax for type double precision: ""
+2024-04-03 23:39:17.911 PDT [56542] postgres@testdb CONTEXT:  COPY nutrient, line 75, column rank: ""
+2024-04-03 23:39:17.911 PDT [56542] postgres@testdb STATEMENT:  COPY  nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:39:50.745 PDT [56542] postgres@testdb ERROR:  invalid input syntax for type double precision: ""
+2024-04-03 23:39:50.745 PDT [56542] postgres@testdb CONTEXT:  COPY food_nutrient, line 2692, column amount: ""
+2024-04-03 23:39:50.745 PDT [56542] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:40:14.902 PDT [56542] postgres@testdb ERROR:  insert or update on table "food_portion" violates foreign key constraint "food_portion_measure_unit_id_fkey"
+2024-04-03 23:40:14.902 PDT [56542] postgres@testdb DETAIL:  Key (measure_unit_id)=(1001) is not present in table "measure_unit".
+2024-04-03 23:40:14.902 PDT [56542] postgres@testdb STATEMENT:  COPY  food_portion FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:41:00.576 PDT [58181] postgres@testdb ERROR:  syntax error at or near "ER" at character 1
+2024-04-03 23:41:00.576 PDT [58181] postgres@testdb STATEMENT:  ER ',' CSV HEADER;
+2024-04-03 23:41:09.093 PDT [58181] postgres@testdb ERROR:  insert or update on table "food_nutrient" violates foreign key constraint "food_nutrient_nutrient_id_fkey"
+2024-04-03 23:41:09.093 PDT [58181] postgres@testdb DETAIL:  Key (nutrient_id)=(2066) is not present in table "nutrient".
+2024-04-03 23:41:09.093 PDT [58181] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:42:35.312 PDT [60141] postgres@testdb ERROR:  relation "measure_unit" already exists
+2024-04-03 23:42:35.312 PDT [60141] postgres@testdb STATEMENT:  CREATE TABLE measure_unit (    measure_unit_id INTEGER NOT NULL PRIMARY KEY,    name CHAR(255));
+2024-04-03 23:42:35.312 PDT [60141] postgres@testdb ERROR:  relation "food_update_log_entry" already exists
+2024-04-03 23:42:35.312 PDT [60141] postgres@testdb STATEMENT:  CREATE TABLE food_update_log_entry (    fdc_id INTEGER PRIMARY KEY,    description CHAR(255),    last_updated DATE);
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb ERROR:  relation "nutrient" already exists
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb STATEMENT:  CREATE TABLE nutrient (    id INTEGER NOT NULL PRIMARY KEY,    name CHAR(255),    unit_name CHAR(255),    nutrient_nbr CHAR(255),    rank CHAR(255));
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb ERROR:  relation "food_portion" already exists
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb STATEMENT:  CREATE TABLE food_portion (    id INTEGER NOT NULL PRIMARY KEY,    fdc_id INTEGER NOT NULL,    seq_num CHAR(255),    amount FLOAT,    measure_unit_id INTEGER NOT NULL,    portion_description CHAR(255),    modifier CHAR(255),    gram_weight FLOAT,    data_points CHAR(255),    footnote CHAR(255),    min_year_acquired CHAR(255),    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),    FOREIGN KEY (measure_unit_id) REFERENCES measure_unit(measure_unit_id));
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb ERROR:  relation "food_nutrient" already exists
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb STATEMENT:  CREATE TABLE food_nutrient (    id INTEGER NOT NULL PRIMARY KEY,    fdc_id INTEGER NOT NULL,    nutrient_id INTEGER NOT NULL,    amount CHAR(255),    data_points CHAR(255),    derivation_id CHAR(255),    min CHAR(255),    max CHAR(255),    median CHAR(255),    footnote CHAR(255),    min_year_acquired CHAR(255),    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id),    FOREIGN KEY (nutrient_id) REFERENCES nutrient(id));
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb ERROR:  relation "users" already exists
+2024-04-03 23:42:35.313 PDT [60141] postgres@testdb STATEMENT:  CREATE TABLE users (    user_id INTEGER PRIMARY KEY,    fdc_id INTEGER NOT NULL,    name CHAR(255),    date DATE,    FOREIGN KEY (fdc_id) REFERENCES food_update_log_entry(fdc_id));
+2024-04-03 23:43:10.681 PDT [60458] postgres@testdb ERROR:  insert or update on table "food_nutrient" violates foreign key constraint "food_nutrient_nutrient_id_fkey"
+2024-04-03 23:43:10.681 PDT [60458] postgres@testdb DETAIL:  Key (nutrient_id)=(1051) is not present in table "nutrient".
+2024-04-03 23:43:10.681 PDT [60458] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:45:32.512 PDT [62820] postgres@testdb ERROR:  insert or update on table "food_nutrient" violates foreign key constraint "food_nutrient_nutrient_id_fkey"
+2024-04-03 23:45:32.512 PDT [62820] postgres@testdb DETAIL:  Key (nutrient_id)=(1051) is not present in table "nutrient".
+2024-04-03 23:45:32.512 PDT [62820] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:45:50.962 PDT [62820] postgres@testdb ERROR:  insert or update on table "food_nutrient" violates foreign key constraint "food_nutrient_nutrient_id_fkey"
+2024-04-03 23:45:50.962 PDT [62820] postgres@testdb DETAIL:  Key (nutrient_id)=(2066) is not present in table "nutrient".
+2024-04-03 23:45:50.962 PDT [62820] postgres@testdb STATEMENT:  COPY  food_nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:47:14.829 PDT [62820] postgres@testdb ERROR:  duplicate key value violates unique constraint "nutrient_pkey"
+2024-04-03 23:47:14.829 PDT [62820] postgres@testdb DETAIL:  Key (nutrient_id)=(2047) already exists.
+2024-04-03 23:47:14.829 PDT [62820] postgres@testdb CONTEXT:  COPY nutrient, line 2
+2024-04-03 23:47:14.829 PDT [62820] postgres@testdb STATEMENT:  COPY  nutrient FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-03 23:47:36.489 PDT [65308] postgres@testdb ERROR:  syntax error at or near "\" at character 65
+2024-04-03 23:47:36.489 PDT [65308] postgres@testdb STATEMENT:  COPY  food_update_log_entry FROM STDIN DELIMITER ',' CSV HEADER;\COPY measure_unit FROM 'cs457_hw4/measure_unit.csv' DELIMITER ',' CSV HEADER;
+2024-04-03 23:48:17.250 PDT [65308] postgres@testdb ERROR:  syntax error at or near "users" at character 197
+2024-04-03 23:48:17.250 PDT [65308] postgres@testdb STATEMENT:  SELECT     users.id AS user_id,     users.fdc_id AS log_id,     food_update_log_entry.description AS log_description,     nutrient.name AS nutrient,    food_nutrient.amount AS nutrient_amountFROM users INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_idINNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 23:49:58.383 PDT [65308] postgres@testdb ERROR:  column nutrient.id does not exist at character 368
+2024-04-03 23:49:58.383 PDT [65308] postgres@testdb STATEMENT:  SELECT users.id AS user_id, users.fdc_id AS log_id, food_update_log_entry.description AS log_description, nutrient.name AS nutrient, food_nutrient.amount AS nutrient_amount FROM users INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id INNER JOIN nutrient ON nutrient.id = food_nutrient.nutrient_id;
+2024-04-03 23:50:55.362 PDT [65308] postgres@testdb ERROR:  column users.id does not exist at character 8
+2024-04-03 23:50:55.362 PDT [65308] postgres@testdb STATEMENT:  SELECT users.id AS user_id, users.fdc_id AS log_id, food_update_log_entry.description AS log_description, nutrient.name AS nutrient, food_nutrient.amount AS nutrient_amount FROM users INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_id INNER JOIN nutrient ON nutrient.nutrient_id = food_nutrient.nutrient_id;
+2024-04-03 23:55:54.506 PDT [72280] postgres@testdb LOG:  could not send data to client: Broken pipe
+2024-04-03 23:55:54.506 PDT [72280] postgres@testdb STATEMENT:  COPY public.food_nutrient (id, fdc_id, nutrient_id, amount, data_points, derivation_id, min, max, median, footnote, min_year_acquired) TO stdout;
+2024-04-03 23:55:54.506 PDT [72280] postgres@testdb ERROR:  canceling statement due to user request
+2024-04-03 23:55:54.506 PDT [72280] postgres@testdb STATEMENT:  COPY public.food_nutrient (id, fdc_id, nutrient_id, amount, data_points, derivation_id, min, max, median, footnote, min_year_acquired) TO stdout;
+2024-04-03 23:55:54.506 PDT [72280] postgres@testdb FATAL:  connection to client lost
+2024-04-03 23:59:33.536 PDT [77953] root@testdb FATAL:  role "root" does not exist
+2024-04-04 00:08:24.771 PDT [82383] postgres@testdb ERROR:  syntax error at or near "users" at character 202
+2024-04-04 00:08:24.771 PDT [82383] postgres@testdb STATEMENT:  SELECT     users.user_id AS user_id,     users.fdc_id AS log_id,     food_update_log_entry.description AS log_description,     nutrient.name AS nutrient,    food_nutrient.amount AS nutrient_amountFROM users INNER JOIN food_update_log_entry ON users.fdc_id = food_update_log_entry.fdc_id INNER JOIN food_nutrient ON food_update_log_entry.fdc_id = food_nutrient.fdc_idINNER JOIN nutrient ON nutrient.nutrient_id = food_nutrient.nutrient_id;
+2024-04-06 13:16:09.769 PDT [47590] postgres@postgres ERROR:  syntax error at or near "psql" at character 1
+2024-04-06 13:16:09.769 PDT [47590] postgres@postgres STATEMENT:  psql -l
+	psql
+	-l
+	list
+	help
+	ALTER TABLE table_name RENAME TO new_table_name;
+2024-04-06 13:18:48.481 PDT [47590] postgres@postgres ERROR:  syntax error at or near "table_name" at character 1
+2024-04-06 13:18:48.481 PDT [47590] postgres@postgres STATEMENT:  table_name
+	ALTER TABLE table_name RENAME TO new_table_name
+	ALTER TABLE users RENAME TO entry
+	;
+2024-04-06 13:51:29.463 PDT [58696] postgres@postgres LOG:  provided user name (postgres) and authenticated user name (jannarellano) do not match
+2024-04-06 13:51:29.464 PDT [58696] postgres@postgres FATAL:  Peer authentication failed for user "postgres"
+2024-04-06 13:51:29.464 PDT [58696] postgres@postgres DETAIL:  Connection matched pg_hba.conf line 89: "local   all             postgres                                peer"
+2024-04-06 14:01:47.733 PDT [64459] postgres@postgres FATAL:  password authentication failed for user "postgres"
+2024-04-06 14:01:47.733 PDT [64459] postgres@postgres DETAIL:  User "postgres" has no password assigned.
+	Connection matched pg_hba.conf line 96: "host    all             all             127.0.0.1/32            md5"
+2024-04-06 14:01:47.736 PDT [64460] postgres@postgres FATAL:  password authentication failed for user "postgres"
+2024-04-06 14:01:47.736 PDT [64460] postgres@postgres DETAIL:  User "postgres" has no password assigned.
+	Connection matched pg_hba.conf line 96: "host    all             all             127.0.0.1/32            md5"
+2024-04-06 14:03:07.922 PDT [47590] postgres@postgres ERROR:  syntax error at or near "postgres" at character 35
+2024-04-06 14:03:07.922 PDT [47590] postgres@postgres STATEMENT:  ALTER USER postgres WITH PASSWORD postgres
+	ALTER USER postgres WITH PASSWORD 'postgres'
+	;
+2024-04-06 14:05:14.232 PDT [65650] postgres@postgres ERROR:  insert or update on table "entry" violates foreign key constraint "users_fdc_id_fkey"
+2024-04-06 14:05:14.232 PDT [65650] postgres@postgres DETAIL:  Key (fdc_id)=(319874) is not present in table "food_update_log_entry".
+2024-04-06 14:05:14.232 PDT [65650] postgres@postgres STATEMENT:  
+	                        INSERT INTO entry (user_id, fdc_id, name, date)
+	                        VALUES ('0', '319874', 'default', '03/01/24')
+2024-04-06 14:09:14.198 PDT [47590] postgres@postgres ERROR:  extra data after last expected column
+2024-04-06 14:09:14.198 PDT [47590] postgres@postgres CONTEXT:  COPY food_update_log_entry, line 2: ""319874","HUMMUS, SABRA CLASSIC","2019-04-01""
+2024-04-06 14:09:14.198 PDT [47590] postgres@postgres STATEMENT:  COPY  food_update_log_entry FROM STDIN DELIMITER ',' CSV HEADER;
+2024-04-06 14:10:12.708 PDT [70575] postgres@testdb ERROR:  relation "entry" does not exist at character 22
+2024-04-06 14:10:12.708 PDT [70575] postgres@testdb STATEMENT:  select count(*) from entry;
+2024-04-06 14:11:28.089 PDT [71711] postgres@postgres ERROR:  insert or update on table "entry" violates foreign key constraint "users_fdc_id_fkey"
+2024-04-06 14:11:28.089 PDT [71711] postgres@postgres DETAIL:  Key (fdc_id)=(319874) is not present in table "food_update_log_entry".
+2024-04-06 14:11:28.089 PDT [71711] postgres@postgres STATEMENT:  
+	                        INSERT INTO entry (user_id, fdc_id, name, date)
+	                        VALUES ('0', '319874', 'default', '03/03/03')
+2024-04-06 14:11:35.768 PDT [71711] postgres@postgres ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2024-04-06 14:11:35.768 PDT [71711] postgres@postgres STATEMENT:  
+	                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+	                        FROM entry
+	                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+	                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+	                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+	                        WHERE entry.date = 03/03/03 AND entry.user_id = 0
+2024-04-06 14:13:25.119 PDT [73017] postgres@postgres ERROR:  insert or update on table "entry" violates foreign key constraint "users_fdc_id_fkey"
+2024-04-06 14:13:25.119 PDT [73017] postgres@postgres DETAIL:  Key (fdc_id)=(319875) is not present in table "food_update_log_entry".
+2024-04-06 14:13:25.119 PDT [73017] postgres@postgres STATEMENT:  
+	                        INSERT INTO entry (user_id, fdc_id, name, date)
+	                        VALUES ('0', '319875', 'default', '03/03/03')
+2024-04-06 14:14:59.068 PDT [73898] postgres@testdb ERROR:  operator does not exist: date = integer at character 480
+2024-04-06 14:14:59.068 PDT [73898] postgres@testdb HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+2024-04-06 14:14:59.068 PDT [73898] postgres@testdb STATEMENT:  
+	                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+	                        FROM entry
+	                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+	                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+	                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+	                        WHERE entry.date = 03/03/03 AND entry.user_id = 0
+2024-04-06 17:44:55.750 PDT [86741] postgres@testdb ERROR:  duplicate key value violates unique constraint "users_pkey"
+2024-04-06 17:44:55.750 PDT [86741] postgres@testdb DETAIL:  Key (user_id)=(0) already exists.
+2024-04-06 17:44:55.750 PDT [86741] postgres@testdb STATEMENT:  
+	                        INSERT INTO entry (user_id, fdc_id, name, date)
+	                        VALUES ('0', '319874', 'default', '2024-03-03')
+2024-04-06 17:47:26.747 PDT [70575] postgres@testdb ERROR:  constraint "user_id" of relation "entry" does not exist
+2024-04-06 17:47:26.747 PDT [70575] postgres@testdb STATEMENT:  ALTER TABLE entry DROP CONSTRAINT user_id;
+2024-04-06 17:48:24.803 PDT [70575] postgres@testdb ERROR:  syntax error at or near "." at character 46
+2024-04-06 17:48:24.803 PDT [70575] postgres@testdb STATEMENT:  SELECT constraint_nameFROM information_schema.table_constraintsWHERE table_name = 'entry'  AND constraint_type = 'PRIMARY KEY';
+2024-04-06 17:49:24.172 PDT [89524] postgres@testdb ERROR:  operator does not exist: date = integer at character 480
+2024-04-06 17:49:24.172 PDT [89524] postgres@testdb HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+2024-04-06 17:49:24.172 PDT [89524] postgres@testdb STATEMENT:  
+	                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+	                        FROM entry
+	                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+	                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+	                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+	                        WHERE entry.date = 2024-03-03 AND entry.user_id = 0
+2024-04-06 17:50:38.706 PDT [90406] postgres@testdb ERROR:  syntax error at or near "2024" at character 487
+2024-04-06 17:50:38.706 PDT [90406] postgres@testdb STATEMENT:  
+	                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+	                        FROM entry
+	                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+	                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+	                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+	                        WHERE entry.date = DATE 2024-03-03 AND entry.user_id = 0
+2024-04-06 18:21:30.490 PDT [9085] postgres@testdb ERROR:  invalid input syntax for type date: "2" at character 482
+2024-04-06 18:21:30.490 PDT [9085] postgres@testdb STATEMENT:  
+	                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+	                        FROM entry
+	                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+	                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+	                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+	                        WHERE entry.date = '2'
+	                        
+2024-04-06 18:21:38.683 PDT [9085] postgres@testdb ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2024-04-06 18:21:38.683 PDT [9085] postgres@testdb STATEMENT:  
+	                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+	                        FROM entry
+	                        INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
+	                        INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
+	                        INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
+	                        WHERE entry.date = '2024-03-03'
+	                        
+2024-04-06 18:33:33.072 PDT [16722] jannarellano@jannarellano FATAL:  role "jannarellano" does not exist
+2024-04-06 18:34:53.777 PDT [17524] jannarellano@testdb FATAL:  role "jannarellano" does not exist
+2024-04-06 18:37:10.392 PDT [70575] postgres@testdb ERROR:  syntax error at or near "pg_dump" at character 1
+2024-04-06 18:37:10.392 PDT [70575] postgres@testdb STATEMENT:  pg_dump
+	pg_dump schema-only
+	pg_dump testdb 
+	CREATE ROLE jannarellano WITH LOGIN PASSWORD 'postgres';
+2024-04-06 18:37:26.998 PDT [70575] postgres@testdb ERROR:  syntax error at or near "pg_dump" at character 1
+2024-04-06 18:37:26.998 PDT [70575] postgres@testdb STATEMENT:  pg_dump;
+2024-04-06 18:37:34.009 PDT [70575] postgres@testdb ERROR:  syntax error at or near "pg_dump" at character 1
+2024-04-06 18:37:34.009 PDT [70575] postgres@testdb STATEMENT:  pg_dump testdb;
+2024-04-06 18:37:42.289 PDT [20047] jannarellano@testdb ERROR:  permission denied for table measure_unit
+2024-04-06 18:37:42.289 PDT [20047] jannarellano@testdb STATEMENT:  LOCK TABLE public.measure_unit IN ACCESS SHARE MODE

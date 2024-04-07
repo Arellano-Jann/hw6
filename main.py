@@ -35,18 +35,11 @@ class User:
                         INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
                         WHERE entry.date = '{date}' AND entry.user_id = {self.user_id}
                         """)
-            # entry.date, entry.user_id,
-            # WHERE entry.date = '{date}' AND entry.user_id = {self.user_id}
-            # cur.execute(f"""
-            #             SELECT *
-            #             FROM entry""")
             rows = cur.fetchall()
             if rows:
                 print(f"Food Log (ID {self.user_id}: {self.name} on {date})")
-                # print(rows)
                 for row in rows:
-                    print(row[0], row[1], row[2], row[3])
-                    print(f"User: , FoodId: , Foods: , Nutrients: ")
+                    print(f"User: {row[0].strip()}, FoodId: {row[1]}, Foods: {row[2].strip()}, Nutrients: {row[3].strip()}")
             else: print("No data found")
         except Error as e:
             print(f"Error {e}")
