@@ -4,7 +4,7 @@ from datetime import datetime
 
 def menu():
     print("BIENVENIDOS MONKEYS. DO YOU LIKE BANANAS?")
-    print("1. Log Food\n2.View Nutrients\n3.Select/Add User\n0. Exit")
+    print("1. Log Food\n2. View Nutrients\n3. Select/Add User\n0. Exit")
 
 class User:
     def __init__(self, user_id='0', name="default") -> None:
@@ -12,32 +12,40 @@ class User:
         self.name = name
 
     def log_food(self, conn, cur):
-        food = input("Food? ")
-        date = input("Date? (dd/mm/yy)")
+        food = input("Food? (######) ")
+        date = input("Date? (YYYY-MM-DD) ")
         try:
             cur.execute(f"""
                         INSERT INTO entry (user_id, fdc_id, name, date)
                         VALUES ('{self.user_id}', '{food}', '{self.name}', '{date}')""")
             conn.commit()
-            print(f"Logged ({food} on {date})")
+            print(f"Logged ({food} on {date}) for ID {self.user_id}: {self.name}")
         except Error as e:
             print(f"Error {e}")
 
     def view_nutrients(self, cur):
-        date = input("Date? (dd/mm/yy)")
+        date = input("Date? (YYYY-MM-DD) ")
         try:
             cur.execute(f"""
-                        SELECT entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
+                        SELECT
+                        entry.name, food_nutrient.fdc_id, food_update_log_entry.description, nutrient.name
                         FROM entry
                         INNER JOIN food_update_log_entry ON entry.fdc_id = food_update_log_entry.fdc_id
                         INNER JOIN food_nutrient ON entry.fdc_id = food_nutrient.fdc_id
                         INNER JOIN nutrient ON food_nutrient.nutrient_id = nutrient.nutrient_id
-                        WHERE entry.date = {date} AND entry.user_id = {self.user_id}""")
+                        WHERE entry.date = '{date}' AND entry.user_id = {self.user_id}
+                        """)
+            # entry.date, entry.user_id,
+            # WHERE entry.date = '{date}' AND entry.user_id = {self.user_id}
+            # cur.execute(f"""
+            #             SELECT *
+            #             FROM entry""")
             rows = cur.fetchall()
             if rows:
-                print(f"Food Log ({self.user_id} on {date})")
-                print(rows)
+                print(f"Food Log (ID {self.user_id}: {self.name} on {date})")
+                # print(rows)
                 for row in rows:
+                    print(row[0], row[1], row[2], row[3])
                     print(f"User: , FoodId: , Foods: , Nutrients: ")
             else: print("No data found")
         except Error as e:
@@ -46,31 +54,22 @@ class User:
 
 def main():
     user_list = {'0' : User()} # {'id' : User}
-    current_user = '0'
-    db = 'dbname=postgres user=postgres'
-    
-    def get_user():
-        user_id = input("Input User Id: ")
-        name = input("Input Name: ")
-        current_user = user_list.get(user_id, User(user_id, name)) # create new user if DNE
-        user_list[user_id] = current_user # add to user list
+    current_user = user_list['0']
         
-    print("main")
-    with psycopg.connect(db) as conn:
-        print("psycopg")
+    with psycopg.connect(dbname="testdb", user="postgres", host="localhost", password="postgres") as conn:
         with conn.cursor() as cur:
-            print("conn")
             while True:
-                print("True")
                 menu()
                 choice = input("Select choice: ")
-                casing = {
-                    '1' : user_list[current_user].log_food(conn, cur),
-                    '2' : user_list[current_user].view_nutrients(cur),
-                    '3' : get_user(),
-                }
                 if choice == '0': return
-                else: casing.get(choice, lambda x : print("Invalid. AGAIN"))()
+                elif choice == '1': current_user.log_food(conn, cur)
+                elif choice == '2': current_user.view_nutrients(cur)
+                elif choice == '3':
+                    user_id = input("Input User Id: ")
+                    name = input("Input Name: ")
+                    current_user = user_list.get(user_id, User(user_id, name)) # create new user if DNE
+                    user_list[user_id] = current_user # add to user list
+                else: print("INVALID MONKEY")
 
 if __name__ == "__main__":
     main()

@@ -45,7 +45,7 @@ CREATE TABLE food_nutrient (
     FOREIGN KEY (nutrient_id) REFERENCES nutrient(nutrient_id)
 );
 CREATE TABLE entry (
-    user_id INTEGER PRIMARY KEY,
+    user_id INTEGER,
     fdc_id INTEGER NOT NULL,
     name CHAR(255),
     date DATE,
